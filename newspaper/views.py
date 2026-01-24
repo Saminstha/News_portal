@@ -1,8 +1,13 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, ListView, DetailView
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, ListView, DetailView, CreateView
 from django.utils import timezone
 from datetime import timedelta
-from .models import Post, Advertisement    
+from newspaper.forms import ContactForm
+from .models import Contact, OurTeam, Post, Advertisement, Category, Tag    
+from django.contrib import messages   
+from django.contrib.messages.views import SuccessMessageMixin
+
 
 # Create your views here.
 
@@ -98,3 +103,45 @@ class PostByCategoryView(SideBarMixin, ListView):
             category__id=self.kwargs['category_id']
         ).order_by('-published_at')
         return query    
+    
+
+class CategoryListView(TemplateView):
+    model = Category
+    template_name = "newsportal/categories.html"
+    context_object_name = "categories"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
+    
+class TagListView(TemplateView):
+    model = Tag
+    template_name = "newsportal/tags.html"
+    context_object_name = "tags"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tags'] = Tag.objects.all()
+        return context
+
+
+class ContactCreateView(SuccessMessageMixin, CreateView):
+    model = Contact
+    form_class = ContactForm
+    template_name = "newsportal/contact.html"
+    success_url = reverse_lazy("contact")
+    success_message = "Your message has been sent successfully!"
+    
+    def form_invalid(self, form):
+        messages.error(self.request, "There was an error sending your message. Please check your form.")
+        return super().form_invalid(form)
+
+
+class AboutView(TemplateView):
+    template_name = "newsportal/about.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['our_teams'] = OurTeam.objects.all()
+        return context

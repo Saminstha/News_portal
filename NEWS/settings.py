@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'newspaper',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -121,3 +122,16 @@ STATICFILES_DIRS = ['static']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media'
+
+
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.DEBUG: 'debug',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
