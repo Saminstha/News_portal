@@ -1,4 +1,4 @@
-from newspaper.models import Contact, Comment
+from newspaper.models import Contact, Comment, Newsletter
 from django import forms
 
 class ContactForm(forms.ModelForm):
@@ -10,3 +10,8 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']
+        
+class NewsletterForm(forms.ModelForm):
+    class Meta:
+        model = Newsletter
+        fields = '__all__'

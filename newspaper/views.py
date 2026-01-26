@@ -1,9 +1,11 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView
 from django.utils import timezone
 from datetime import timedelta
-from newspaper.forms import CommentForm, ContactForm
+from newspaper.forms import CommentForm, ContactForm, NewsletterForm
 from .models import Contact, OurTeam, Post, Advertisement, Category, Tag , Comment
 from django.contrib import messages   
 from django.contrib.messages.views import SuccessMessageMixin
@@ -168,3 +170,34 @@ class AboutView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['our_teams'] = OurTeam.objects.all()
         return context
+    
+    
+class NewsletterView(View):
+    def post(self, request):
+        is_ajax=request.headers.get('X-Requested-With')
+        if is_ajax == 'XMLHttpRequest':
+            form=NewsletterForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return JsonResponse(
+                    {'success':True,
+                     'message':'Subscription successful!'
+                     }, 
+                    status=201,
+                )
+            else:
+                return JsonResponse(
+                    {'success':False,
+                     'message':'Cannot subscribe to the newsletter!'
+                     }, 
+                    status=400,
+                )
+        else:
+            return JsonResponse(
+                {'success':False,
+                 'message':'Cannot process. must be an AJAX XMLHttpRequest'
+                 }, 
+                status=400,
+            )
+    
+    

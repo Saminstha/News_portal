@@ -10,4 +10,5 @@ urlpatterns = [
     path('tags/', views.TagListView.as_view(), name='tags'),
     path('contact/', views.ContactCreateView.as_view(), name='contact'),
     path('about/', views.AboutView.as_view(), name='about'),
+    path('newsletter/', views.NewsletterView.as_view(), name='newsletter'),
 ]
