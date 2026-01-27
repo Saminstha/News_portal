@@ -11,4 +11,5 @@ urlpatterns = [
     path('contact/', views.ContactCreateView.as_view(), name='contact'),
     path('about/', views.AboutView.as_view(), name='about'),
     path('newsletter/', views.NewsletterView.as_view(), name='newsletter'),
+    path('post-search/', views.PostSearchView.as_view(), name='post-search'),
 ]

@@ -30,7 +30,7 @@
     <script src="{% static 'js/script.js' %}"></script>
 
     <script>
-      $("newsletter_side_form").submit(function(event) {
+      $("#newsletter_side_form").submit(function(event) {
         event.preventDefault();
         let serializedData = $(this).serialize();
 
@@ -39,14 +39,41 @@
           type: "POST",
           data: serializedData,
 
-          success: function(response) {
-            console.log("Success:", response)
-          },
-          error: function(response) {
-            sonsole.log("Error:", response)
+          success: function (response) {
+              console.log("Success", response)
+              $("#newsletter_side_message").html(`
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            ${response.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `);
+
+            },
+
+            error: function (response) {
+              console.log("Failure", response)
+              $('#newsletter_side_message').html(`
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                               ${response.responseJSON.message}
+                              <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                      aria-label="Close"></button>
+                            </div>
+                          
+                `);
+
           }
         });
       });
     </script>
+    <script>
+        $(".page-link").click(function (e) {
+            e.preventDefault();
+            let url = new URL(window.location.href);
+            let searchParams = (url.searchParams.get("query") || ""); // nepal
+            url.search= $(this),attr("href")+ "&query=" + searchParams; // ?page=2&query=nepal
+            window.location.href = url;
+        });
+    </script>
+
   </body>
 </html>

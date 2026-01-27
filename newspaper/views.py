@@ -10,6 +10,8 @@ from .models import Contact, OurTeam, Post, Advertisement, Category, Tag , Comme
 from django.contrib import messages   
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import FormMixin
+from django.core.paginator import Paginator, PageNotAnInteger
+from django.db.models import Q
 
 
 # Create your views here.
@@ -200,4 +202,45 @@ class NewsletterView(View):
                 status=400,
             )
     
-    
+class PostSearchView(View):
+    template_name = "newsportal/list/list.html"
+
+    def get(self, request):
+        # query=nepali search => title=nepal or content=nepal
+        print(request.GET)
+        query = request.GET["query"]  # nepal => NePaL
+
+        post_list = Post.objects.filter(
+            Q(title__icontains=query) | Q(content__icontains=query)         # | ==> OR 
+            & Q(status="active")                                            # & ==> AND
+            & Q(published_at__isnull=False)
+        ).order_by(
+            "-published_at"
+        )  # QuerySet => ORM
+
+        # pagination start
+        page = request.GET.get("page", 1)  # 1
+        paginate_by = 1
+        paginator = Paginator(post_list, paginate_by)
+
+        try:
+            posts = paginator.page(page) #1
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        # pagination end
+        popular_posts = Post.objects.filter(
+            published_at__isnull=False, status="active"
+        ).order_by("-published_at")[:5]
+
+        advertisement = Advertisement.objects.all().order_by("-created_at").first()
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "page_obj": posts,
+                "query": query,
+                "popular_posts": popular_posts,
+                "advertisement": advertisement,
+            },
+        )
