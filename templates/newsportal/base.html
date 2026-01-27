@@ -70,7 +70,7 @@
             e.preventDefault();
             let url = new URL(window.location.href);
             let searchParams = (url.searchParams.get("query") || ""); // nepal
-            url.search= $(this),attr("href")+ "&query=" + searchParams; // ?page=2&query=nepal
+            url.search= $(this).attr("href")+ "&query=" + searchParams; // ?page=2&query=nepal
             window.location.href = url;
         });
     </script>
