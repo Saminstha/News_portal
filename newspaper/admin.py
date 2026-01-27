@@ -35,5 +35,12 @@ class PostAdmin(ModelAdmin):
         'category',
         'is_breaking_news'
     ]
+    search_fields = (
+        'title',
+        'content',
+        'author__username',
+        'category__name',
+        'tag__name',
+    )
     
     
