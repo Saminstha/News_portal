@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
 
-from newspaper.models import Category, Post, Tag
+from newspaper.models import Category, Comment, Post, Tag
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -56,4 +56,16 @@ class PostSerializer(serializers.ModelSerializer):
 
 class PostPublishSerializer(serializers.Serializer):
     id= serializers.IntegerField()
-             
+    
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ["id", "content", "created_at", "post", "user"]
+        extra_kwargs = {
+            "post": {"read_only": True},
+            "user": {"read_only": True},
+            "created_at": {"read_only": True},
+        }
+ 
+        

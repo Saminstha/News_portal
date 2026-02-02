@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from newspaper.models import Tag, Category, Post, Newsletter, Contact, Comment
-from api.serializers import GroupSerializer, UserSerializer, TagSerializer, CategorySerializer, PostSerializer, PostPublishSerializer
+from api.serializers import CommentSerializer, GroupSerializer, UserSerializer, TagSerializer, CategorySerializer, PostSerializer, PostPublishSerializer
 from django.utils import timezone
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -158,4 +158,22 @@ class PostPublishViewSet(APIView):
             serialized_data = PostSerializer(post).data
             return Response(serialized_data, status=status.HTTP_200_OK)
         
-       
+
+class CommentListCreateAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+
+    def get(self, request, post_id, *args, **kwargs):
+        comments = Comment.objects.filter(post=post_id).order_by("-created_at")
+        serialized_data = CommentSerializer(comments, many=True).data
+        return Response(serialized_data, status=status.HTTP_200_OK)
+
+    def post(self, request, post_id, *args, **kwargs):
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(post_id=post_id, user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)    

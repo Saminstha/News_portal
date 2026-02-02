@@ -18,5 +18,6 @@ urlpatterns = [
     path("post-by-category/<int:category_id>/", views.PostListByCategoryView.as_view(), name="post-list-by-category-api"),
     path("post-by-tag/<int:tag_id>/", views.TagListByCategoryView.as_view(), name="tag-list-by-category-api"),
     path("post-publish/", views.PostPublishViewSet.as_view(), name="post-publish-api"),
+    path("post/<int:post_id>/comments/", views.CommentListCreateAPIView.as_view(), name="comment-list-create-api"),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
 ]
